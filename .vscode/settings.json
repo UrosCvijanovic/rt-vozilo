@@ -1,0 +1,9 @@
+{
+  // Makefile koristi mkdir -p, rm -rf i taskkill //F, sto radi samo u Git Bash-u
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "terminal.integrated.automationProfile.windows": {
+    "path": "C:\\Program Files\\Git\\bin\\bash.exe"
+  },
+  // U skladu sa core.autocrlf=false: VS Code na Windowsu inace pravi nove fajlove sa CRLF
+  "files.eol": "\n"
+}

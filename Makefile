@@ -1,5 +1,5 @@
 # ============================================================
-#  rt-vozilo — build za STM32F405 (Cortex-M4F) + HDS RTOS
+#  rt-vozilo (build za STM32F405 (Cortex-M4F) + HDS RTOS)
 #  Pokretanje u QEMU (netduinoplus2), izlaz preko semihostinga
 # ============================================================
 SHELL := /bin/bash
@@ -64,7 +64,7 @@ INCLUDES := $(addprefix -I,$(RTOS_SUBDIRS)) \
 CPU := -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 
 
-DEFS := -DSTM32F405xx
+DEFS := -DSTM32F405xx -DQEMU_SYSCLK_HZ=168000000
 
 # -O2 je obavezno: bez optimizacije vremena izvrsavanja (C) nisu realna
 # -fno-exceptions/-fno-rtti: standard za embedded C++
@@ -87,8 +87,7 @@ QEMU     := qemu-system-arm
 MACHINE  := netduinoplus2
 # icount vezuje virtuelno vreme za broj instrukcija -> ponovljiva merenja
 ICOUNT   := -icount shift=3,align=off,sleep=off
-QEMUFLAGS := -machine $(MACHINE) -cpu cortex-m4 -nographic \
-             -semihosting-config enable=on,target=native
+QEMUFLAGS := -machine $(MACHINE) -cpu cortex-m4 -nographic -semihosting-config enable=on,target=native
 
 CFLAGS := $(CPU) -std=c11 -O2 -g3 -ffunction-sections -fdata-sections \
           $(DEFS) $(INCLUDES)

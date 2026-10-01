@@ -3,3 +3,5 @@ build/
 *.map
 *.o
 *.csv
+
+qemu.log

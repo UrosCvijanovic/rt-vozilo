@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "QEMU: debug",
+      "type": "cortex-debug",
+      "request": "launch",
+      "servertype": "qemu",
+      "serverpath": "C:/Program Files/qemu/qemu-system-arm.exe",
+      "machine": "netduinoplus2",
+      "cpu": "cortex-m4",
+      "serverArgs": ["-icount", "shift=3,align=off,sleep=off"],
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/app.elf",
+      "runToEntryPoint": "userMain",
+      "preLaunchTask": "make"
+    },
+    {
+      "name": "QEMU: attach (make debug)",
+      "type": "cortex-debug",
+      "request": "attach",
+      "servertype": "external",
+      "gdbTarget": "localhost:1234",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/app.elf"
+    }
+  ]
+}

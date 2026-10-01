@@ -1,0 +1,41 @@
+{
+  // Preslikava INCLUDES, DEFS i CPU iz Makefile-a
+  "configurations": [
+    {
+      "name": "STM32F405 + HDS RTOS",
+      "compilerPath": "C:/Users/Uros/Desktop/GNU MCU/arm-none-eabi-gcc-10.2.1-1.1/bin/arm-none-eabi-g++.exe",
+      "compilerArgs": [
+        "-mcpu=cortex-m4",
+        "-mthumb",
+        "-mfpu=fpv4-sp-d16",
+        "-mfloat-abi=hard"
+      ],
+      "intelliSenseMode": "gcc-arm",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "defines": [
+        "STM32F405xx",
+        "QEMU_SYSCLK_HZ=168000000"
+      ],
+      "includePath": [
+        "${workspaceFolder}",
+        "${workspaceFolder}/app",
+        "${workspaceFolder}/sim",
+        "${workspaceFolder}/CMSIS/Include",
+        "${workspaceFolder}/CMSIS/Device/ST/STM32F4xx/Include",
+        "${workspaceFolder}/rtos/RTOS",
+        "${workspaceFolder}/rtos/RTOS/api",
+        "${workspaceFolder}/rtos/RTOS/api_imp",
+        "${workspaceFolder}/rtos/RTOS/common",
+        "${workspaceFolder}/rtos/RTOS/compiler/gcc",
+        "${workspaceFolder}/rtos/RTOS/core",
+        "${workspaceFolder}/rtos/RTOS/hal",
+        "${workspaceFolder}/rtos/RTOS/mpu",
+        "${workspaceFolder}/rtos/RTOS/sync",
+        "${workspaceFolder}/rtos/RTOS/timing",
+        "${workspaceFolder}/rtos/RTOS/linker"
+      ]
+    }
+  ],
+  "version": 4
+}

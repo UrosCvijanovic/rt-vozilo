@@ -222,6 +222,11 @@ void SystemCoreClockUpdate(void)
 {
   uint32_t tmp = 0, pllvco = 0, pllp = 2, pllsource = 0, pllm = 2;
   
+  #ifdef QEMU_SYSCLK_HZ
+    SystemCoreClock = QEMU_SYSCLK_HZ;
+    return;
+  #endif
+
   /* Get SYSCLK source -------------------------------------------------------*/
   tmp = RCC->CFGR & RCC_CFGR_SWS;
 
