@@ -1,0 +1,13 @@
+diff --git a/RTOS/api/config.h b/RTOS/api/config.h
+index 88567eb..a95a2b5 100644
+--- a/RTOS/api/config.h
++++ b/RTOS/api/config.h
+@@ -73,7 +73,7 @@
+ #endif
+ 
+ /// Track mean/std/max/min execution time and deadline misses.
+-#define cfgUseTelemetry 0
++#define cfgUseTelemetry 1
+ #if cfgUseTelemetry
+     /// Use a dedicated hardware timer (polling-only) as telemetry timestamp source.
+     /// When disabled, telemetry timestamps use the SysTick-based software RTC.

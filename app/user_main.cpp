@@ -16,10 +16,8 @@ static volatile uint32_t highRuns = 0; // ukupno aktivacija H
 static volatile uint32_t highPreempts = 0; // aktivacije H dok je L bio usred petlje
 static volatile uint32_t lowRuns = 0; // zavrsene aktivacije L
 
-
-
-// Proba takta: perioda 1000ms; posle 10 aktivacija upisuje marker
-// ocekivano: 10. aktivacija stize oko 9s posle starta (prva je u t=0)
+static Kernel::TaskTelemetry highTel{};
+static Kernel::TaskTelemetry lowTel{};
 
 __attribute__((noinline)) void probeDone() {
     marker = 1;
@@ -54,10 +52,6 @@ public:
 
 
 void userMain(void) {
-    printf("UserMain: start\n");
-    printf("SystemCoreClock = %lu\n", SystemCoreClock);
-    printf("SysTick CTRL = 0x%08lx, LOAD = %lu\n", SysTick->CTRL, SysTick->LOAD);
-
     // static: objekti moraju da nadzive userMain() i ne smeju na heap
     static HighProbe high;
     static Kernel::StackMem<256> highStack;
@@ -72,7 +66,10 @@ void userMain(void) {
     lowParams.period = 2000_ms;
     lowParams.activation = 0_us;
     static Kernel::PeriodicTask lowTask(low, &lowStack, &lowParams, Kernel::makeTaskCfg(5));
- 
+    
+    highTask.setTelemetry(&highTel);
+    lowTask.setTelemetry(&lowTel);
+
     highTask.start();
     lowTask.start();
 }
