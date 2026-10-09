@@ -1,0 +1,33 @@
+protocol PingProtocol {
+    >ping(uint32_t);
+}
+
+actor Proizvodjac {
+    interface_ports {
+        izlaz : ~PingProtocol;
+    }
+    behavior {
+        enactment = periodic;
+    }
+}
+
+actor Potrosac {
+    interface_ports {
+        ulaz : PingProtocol [[cap = ULAZ_CAP]];
+    }
+    behavior {
+        enactment = ports;
+        ports = or;
+    }
+}
+
+actor Proba {
+    parts {
+        proizvodjac : Proizvodjac;
+        potrosac : Potrosac;
+    }
+    bindings {
+        proizvodjac.izlaz - potrosac.ulaz;
+    }
+
+}
