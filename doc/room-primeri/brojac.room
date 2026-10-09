@@ -1,0 +1,6 @@
+
+actor Brojac {
+    behavior {
+        enactment = periodic;
+    }
+}

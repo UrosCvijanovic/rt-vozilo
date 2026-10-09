@@ -44,7 +44,9 @@ RTOS_ASM := $(RTOS_DIR)/compiler/gcc/hal_handlers_gcc.S \
 APP_CPP  := $(wildcard app/*.cpp) $(wildcard sim/*.cpp)
 MAIN_CPP := main.cpp
 
-SOURCES_CPP := $(RTOS_CPP) $(APP_CPP) $(MAIN_CPP)
+ROOM_CPP := $(wildcard ROOM/*.cpp) $(wildcard actors/*.cpp) $(wildcard protocols/*.cpp)
+
+SOURCES_CPP := $(RTOS_CPP) $(APP_CPP) $(MAIN_CPP) $(ROOM_CPP)
 
 SOURCES_C := system_stm32f4xx.c
 
@@ -58,7 +60,8 @@ INCLUDES := $(addprefix -I,$(RTOS_SUBDIRS)) \
             -I$(RTOS_DIR)/linker \
             -ICMSIS/Include \
             -ICMSIS/Device/ST/STM32F4xx/Include \
-            -Iapp -Isim -I.
+            -Iapp -Isim -I. \
+            -IROOM -Iactors -Iprotocols -Icompat
 
 # ---- Flagovi ----
 CPU := -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard

@@ -5,5 +5,16 @@
     "path": "C:\\Program Files\\Git\\bin\\bash.exe"
   },
   // U skladu sa core.autocrlf=false: VS Code na Windowsu inace pravi nove fajlove sa CRLF
-  "files.eol": "\n"
+  "files.eol": "\n",
+  "files.readonlyInclude": {
+    "actors/**": true,
+    "protocols/**": true,
+    "ROOM/lib.h": true,
+    "ROOM/checkpoint.h": true,
+    "ROOM/upstream/**": true
+  },
+  "files.readonlyExclude": {
+    "actors/actorConfig.h": true,
+    "actors/*_clsdef.h": true
+  }
 }

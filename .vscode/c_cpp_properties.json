@@ -33,7 +33,11 @@
         "${workspaceFolder}/rtos/RTOS/mpu",
         "${workspaceFolder}/rtos/RTOS/sync",
         "${workspaceFolder}/rtos/RTOS/timing",
-        "${workspaceFolder}/rtos/RTOS/linker"
+        "${workspaceFolder}/rtos/RTOS/linker",
+        "${workspaceFolder}/ROOM",
+        "${workspaceFolder}/actors",
+        "${workspaceFolder}/protocols",
+        "${workspaceFolder}/compat"
       ]
     }
   ],

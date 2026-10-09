@@ -184,6 +184,13 @@ SECTIONS
 
   INCLUDE "kernel_sections.ld"
 
+  .room_shared_buffers (NOLOAD) :
+  {
+    . = ALIGN(8);
+    *(.room_shared_buffers)
+  } >RAM
+
+  
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
   {
