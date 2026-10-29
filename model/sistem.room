@@ -1,0 +1,89 @@
+protocol KomandaPogona {
+    >pogon(PodaciPogona);
+}
+
+protocol KomandaOperatera {
+    >ruta(PodaciRute);
+    >start(Vreme);
+    >stop(Vreme);
+}
+
+actor Regulacija {
+    interface_ports {
+        pogonOut : ~KomandaPogona;
+    }
+    behavior {
+        enactment = periodic;
+    }
+}
+
+actor Misija {
+    interface_ports {
+        operaterIn : KomandaOperatera [[cap = OPERATER_CAP]];
+    }
+    behavior {
+        enactment = ports;
+        ports = or;
+    }
+}
+
+actor Plovilo {
+    interface_ports {
+        pogonIn : KomandaPogona;
+    }
+    behavior {
+        enactment = periodic;
+    }
+}
+
+actor Scenario {
+    interface_ports {
+        operaterOut : ~KomandaOperatera;
+    }
+    behavior {
+        enactment = periodic;
+    }
+}
+
+
+actor Upravljanje {
+    interface_ports {
+        pogonOut : ~KomandaPogona;
+        operaterIn : KomandaOperatera;
+    }
+    parts {
+        regulacija : Regulacija;
+        misija : Misija;
+    }
+    bindings {
+        this.pogonOut - regulacija.pogonOut;
+        this.operaterIn - misija.operaterIn;
+    }
+}
+
+actor Simulator {
+    interface_ports {
+        pogonIn : KomandaPogona;
+        operaterOut : ~KomandaOperatera;
+    }
+    parts {
+        plovilo  : Plovilo;
+        scenario : Scenario;
+    }
+    bindings {
+        this.pogonIn - plovilo.pogonIn;
+        this.operaterOut - scenario.operaterOut;
+    }
+}
+
+actor Sistem {
+    parts {
+        simulator : Simulator;
+        upravljanje : Upravljanje;
+    }
+    bindings {
+        upravljanje.pogonOut - simulator.pogonIn;
+        simulator.operaterOut - upravljanje.operaterIn;
+    }
+
+}

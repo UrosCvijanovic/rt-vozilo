@@ -15,6 +15,7 @@
   },
   "files.readonlyExclude": {
     "actors/actorConfig.h": true,
+    "actors/poruka.h": true,
     "actors/*_clsdef.h": true
   }
 }

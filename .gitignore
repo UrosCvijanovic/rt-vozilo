@@ -5,3 +5,5 @@ build/
 *.csv
 
 qemu.log
+
+doc/*
