@@ -1,5 +1,5 @@
 #pragma once
-// app/proba3.h -- proba A3: hijerarhija, relejni portovi i poruke sa podacima
+// app/proba_sistema.h -: hijerarhija, relejni portovi i poruke sa podacima
 // (model/sistem.room; tabela-aktera.md, 2.1).
 // Rezultati se citaju u debageru posle zaustavljanja u probeDone():
 //     p mPlovilo   p mRegulacija   p mScenario   p mMisija
@@ -13,7 +13,12 @@
 constexpr uint8_t PRIO_MISIJA = 2; // sporadicni, najvisi (D < T)
 constexpr uint8_t PRIO_PLOVILO = 3;
 constexpr uint8_t PRIO_REGULACIJA = 4;
-constexpr uint8_t PRIO_SCENARIO   = 5; // najnizi: zavrsava probu
+constexpr uint8_t PRIO_SCENARIO = 5;
+constexpr uint8_t PRIO_SIMGNSS = 6;
+constexpr uint8_t PRIO_SIMIMU = 7;
+constexpr uint8_t PRIO_FUZIJA = 8;
+constexpr uint8_t PRIO_VODJENJE = 9;
+constexpr uint8_t PRIO_TELEMETRIJA = 10;
 
 // Scenario: aktivacija a, t = a x 100 ms
 constexpr uint32_t A_RUTA_START = 1;    // ruta pa start, u istoj aktivaciji

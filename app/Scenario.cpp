@@ -1,11 +1,11 @@
 // app/Scenario.cpp -- ponasanje aktera Scenario u probi A3 (model/sistem.room).
-// Proba: po rasporedu iz proba3.h salje rutu, start i stop kroz dva relejna
+// Proba: po rasporedu iz proba_sistema.h salje rutu, start i stop kroz dva relejna
 // porta (Simulator.operaterOut, Upravljanje.operaterIn) sporadicnoj Misiji,
 // i zavrsava probu u t = 1000 ms.
 #include <cstdint>
 #include "stm32f405xx.h"   // TIM2
 #include "Scenario.h"
-#include "proba3.h"
+#include "proba_sistema.h"
 
 volatile int marker = 0;
 volatile MerenjeScenarija mScenario{};
@@ -30,7 +30,7 @@ namespace Actors {
                 r.wp[i].lon = RUTA_LON0 + i;
             }
             r.n = RUTA_N;
-            r.t = TIM2->CNT; // vreme slanja (17.9)
+            r.t = TIM2->CNT;
             operaterOut.send(KomandaOperatera::ruta(r));
             ++mScenario.poslato;
 

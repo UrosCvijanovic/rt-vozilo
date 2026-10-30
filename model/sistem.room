@@ -1,16 +1,152 @@
+// PROTOCOLS
+
+// Potisak levog i desnog motora, u opsegu [POGON_MIN, POGON_MAX]
 protocol KomandaPogona {
     >pogon(PodaciPogona);
 }
 
+// Komande operatera: 
+// nova ruta, start, stop, povratak kuci, reset iz bezbednog stanja.
 protocol KomandaOperatera {
     >ruta(PodaciRute);
     >start(Vreme);
     >stop(Vreme);
+    >povratak(Vreme);
+    >reset(Vreme);
+}
+
+// Stvarno stanje plovila u NED
+protocol StanjePlovila {
+    >stanje(PodaciPlovila);
+}
+
+// Rezim GNSS prijemnika, ispad i oporavak signala.
+protocol GnssKomanda {
+    >ispad(Vreme);
+    >oporavak(Vreme);
+}
+
+protocol GnssMerenje {
+    >merenje(PodaciGnss);
+}
+
+protocol ImuMerenje {
+    >merenje(PodaciImu);
+}
+
+// Kreirana procena u Fuziji
+protocol ProcenaStanja {
+    >procena(PodaciProcene);
+}
+
+// Gubitak i povratak GNSS-a, posle histereze od 3 merenja
+protocol DogadjajSenzora {
+    >gnssIzgubljen(Vreme);
+    >gnssVracen(Vreme);
+}
+
+// Zadati kurs
+protocol Reference {
+    >zadato(PodaciReference);
+}
+
+// Napredak po ruti: dostignuta tacka (indeks) i zavrsena ruta
+protocol DogadjajRute {
+    >tackaDostignuta(PodaciNapretka);
+    >rutaZavrsena(PodaciNapretka);
+}
+
+// Zadatak vodjenja
+// aktivna ruta, ponistavanje, povratak u ishodiste
+protocol Ruta {
+    >ruta(PodaciRute);
+    >ponisti(Vreme);
+    >kuci(Vreme);
+}
+
+// Rezim rada i dozvola pogona
+protocol Rezim {
+    >rezim(PodaciRezima);
+}
+
+protocol DogadjajRegulacije {
+    >procenaNedostupna(Vreme);
+}
+
+// Izvestaj operateru
+// polozaj, kurs, brzina, rezim, ispravnost pozicije
+protocol Izvestaj {
+    >izvestaj(PodaciIzvestaja);
+}
+
+
+// ACTORS
+
+actor SimGnss {
+    interface_ports {
+        stanjeIn : StanjePlovila;
+        komandaIn : GnssKomanda;
+        merenjeOut : ~GnssMerenje;
+    }
+    behavior {
+        enactment = periodic;
+    }
+}
+
+actor SimImu {
+    interface_ports {
+        stanjeIn : StanjePlovila;
+        merenjeOut : ~ImuMerenje;
+    }
+    behavior {
+        enactment = periodic;
+    }
+}
+
+actor Plovilo {
+    interface_ports {
+        pogonIn : KomandaPogona;
+        stanjeGnssOut : ~StanjePlovila;
+        stanjeImuOut : ~StanjePlovila;
+    }
+    behavior {
+        enactment = periodic;
+    }
+}
+
+actor Fuzija {
+    interface_ports {
+        gnssIn : GnssMerenje;
+        imuIn : ImuMerenje;
+        procenaVodjenjeOut : ~ProcenaStanja;
+        procenaRegulacijaOut : ~ProcenaStanja;
+        procenaTelemetrijaOut : ~ProcenaStanja;
+        senzoriOut : ~DogadjajSenzora;
+    }
+    behavior {
+        enactment = periodic; // 100Hz, T=10ms
+    }
+}
+
+actor Vodjenje {
+    interface_ports {
+        procenaIn : ProcenaStanja;
+        rutaIn : Ruta;
+        referenceOut : ~Reference;
+        napredakOut : ~DogadjajRute;
+    }
+    behavior {
+        enactment = periodic;
+    }
 }
 
 actor Regulacija {
     interface_ports {
+        procenaIn : ProcenaStanja;
+        referenceIn : Reference;
+        rezimIn : Rezim;
         pogonOut : ~KomandaPogona;
+        alarmOut : ~DogadjajRegulacije;
     }
     behavior {
         enactment = periodic;
@@ -20,6 +156,12 @@ actor Regulacija {
 actor Misija {
     interface_ports {
         operaterIn : KomandaOperatera [[cap = OPERATER_CAP]];
+        senzoriIn : DogadjajSenzora [[cap = SENZORI_CAP]];
+        napredakIn : DogadjajRute [[cap = RUTE_CAP]];
+        regulacijaIn : DogadjajRegulacije;
+        rutaOut : ~Ruta;
+        rezimRegulacijaOut : ~Rezim;
+        rezimTelemetrijaOut : ~Rezim;
     }
     behavior {
         enactment = ports;
@@ -27,9 +169,11 @@ actor Misija {
     }
 }
 
-actor Plovilo {
+actor Telemetrija {
     interface_ports {
-        pogonIn : KomandaPogona;
+        procenaIn : ProcenaStanja;
+        rezimIn : Rezim;
+        izvestajOut : ~Izvestaj;
     }
     behavior {
         enactment = periodic;
@@ -38,7 +182,9 @@ actor Plovilo {
 
 actor Scenario {
     interface_ports {
+        izvestajIn : Izvestaj;
         operaterOut : ~KomandaOperatera;
+        gnssKomandaOut : ~GnssKomanda;
     }
     behavior {
         enactment = periodic;
@@ -48,31 +194,65 @@ actor Scenario {
 
 actor Upravljanje {
     interface_ports {
-        pogonOut : ~KomandaPogona;
         operaterIn : KomandaOperatera;
+        gnssIn : GnssMerenje;
+        imuIn : ImuMerenje;
+        pogonOut : ~KomandaPogona;
+        izvestajOut : ~Izvestaj;
     }
     parts {
+        fuzija : Fuzija;
+        vodjenje : Vodjenje;
         regulacija : Regulacija;
         misija : Misija;
+        telemetrija : Telemetrija;
     }
     bindings {
+        // relejne veze
         this.pogonOut - regulacija.pogonOut;
+        this.izvestajOut - telemetrija.izvestajOut;
         this.operaterIn - misija.operaterIn;
+        this.gnssIn - fuzija.gnssIn;
+        this.imuIn - fuzija.imuIn;
+        // unutrasnje veze
+        fuzija.procenaVodjenjeOut - vodjenje.procenaIn;
+        fuzija.procenaRegulacijaOut - regulacija.procenaIn;
+        fuzija.procenaTelemetrijaOut - telemetrija.procenaIn;
+        fuzija.senzoriOut - misija.senzoriIn;
+        vodjenje.referenceOut - regulacija.referenceIn;
+        vodjenje.napredakOut - misija.napredakIn;
+        misija.rutaOut - vodjenje.rutaIn;
+        misija.rezimRegulacijaOut - regulacija.rezimIn;
+        misija.rezimTelemetrijaOut - telemetrija.rezimIn;
+        regulacija.alarmOut - misija.regulacijaIn;
     }
 }
 
 actor Simulator {
     interface_ports {
+        izvestajIn : Izvestaj;
         pogonIn : KomandaPogona;
         operaterOut : ~KomandaOperatera;
+        gnssOut : ~GnssMerenje;
+        imuOut : ~ImuMerenje;
     }
     parts {
+        simGnss : SimGnss;
+        simImu : SimImu;
         plovilo  : Plovilo;
         scenario : Scenario;
     }
     bindings {
+        // relejne veze
         this.pogonIn - plovilo.pogonIn;
+        this.izvestajIn - scenario.izvestajIn;
         this.operaterOut - scenario.operaterOut;
+        this.gnssOut - simGnss.merenjeOut;
+        this.imuOut - simImu.merenjeOut;
+        // unutrasnje veze
+        plovilo.stanjeGnssOut - simGnss.stanjeIn;
+        plovilo.stanjeImuOut - simImu.stanjeIn;
+        scenario.gnssKomandaOut - simGnss.komandaIn;
     }
 }
 
@@ -84,6 +264,9 @@ actor Sistem {
     bindings {
         upravljanje.pogonOut - simulator.pogonIn;
         simulator.operaterOut - upravljanje.operaterIn;
+        simulator.gnssOut - upravljanje.gnssIn;
+        simulator.imuOut - upravljanje.imuIn;
+        upravljanje.izvestajOut - simulator.izvestajIn;
     }
 
 }

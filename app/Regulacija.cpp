@@ -4,7 +4,7 @@
 #include <cstdint>
 #include "stm32f405xx.h"   // TIM2
 #include "Regulacija.h"
-#include "proba3.h"
+#include "proba_sistema.h"
 
 volatile MerenjeRegulacije mRegulacija{};
 

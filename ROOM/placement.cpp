@@ -21,11 +21,11 @@
 
 namespace {
 
-constexpr size_t anyRegionSize = 16 * 1024;
-constexpr size_t taskRegionSize = 4 * 1024;
-constexpr size_t stackRegionSize = 8 * 1024;          // upstream: 4 * 1024
+constexpr size_t anyRegionSize = 1 * 1024;
+constexpr size_t taskRegionSize = 1 * 1024;
+constexpr size_t stackRegionSize = 12 * 1024; // upstream: 4 * 1024
 constexpr size_t actorsRegionSize = 4 * 1024;
-constexpr size_t localBuffersRegionSize = 2 * 1024;
+constexpr size_t localBuffersRegionSize = 4 * 1024;
 constexpr size_t sharedBuffersRegionSize = 2 * 1024;
 constexpr size_t fastRAMRegionSize = 1 * 1024;
 constexpr size_t slowRAMRegionSize = 2 * 1024;

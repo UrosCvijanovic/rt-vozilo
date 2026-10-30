@@ -14,3 +14,6 @@ namespace Protocol {}
 // Privremeno: Scenario moze poslati rutu i start u istoj aktivaciji, pa je
 // potrebno bar 2; konacna vrednost iz T_min u tabeli procesa.
 constexpr std::size_t OPERATER_CAP = 4;
+constexpr std::size_t SENZORI_CAP = 1;
+constexpr std::size_t RUTE_CAP = 1;
+constexpr std::size_t GNSS_HISTEREZA = 3;
